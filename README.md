@@ -2,6 +2,8 @@
 
 A standalone, browser-based neutron tomography acquisition planner. It minimizes scan time for a requested reconstructed-image SNR **within an explicit, empirical planning model**. No reconstructed-SNR prediction is claimed to be experimentally validated.
 
+The example and Reset button use detector efficiency **100%**, effective pixel size **50 µm**, sample diameter **150 mm**, and average transmission **50%**. Required full-period resolution remains 100 µm. The page includes a bullet-point calibration parameter guide and an illustrative SNR-bracket table based on relative noise = 100/SNR percent; these brackets are not validated image-quality or feature-detection thresholds.
+
 ## Reference inspection and architecture
 
 The supplied archive was named `NDFPlotter.zip` (the request referred to `NDFPlotter(1).zip`). It contains a static `index.html`, `style.css`, `js/models.js`, `js/physics.js`, `js/plot.js`, `js/app.js`, `README.md`, and `render.yaml`, plus Git metadata. It uses browser globals in script order, Plotly 2.35.2 from a CDN, a white/slate/navy panel layout, responsive grids and a Render static site. There is no backend, package manifest, database or build system in the reference.

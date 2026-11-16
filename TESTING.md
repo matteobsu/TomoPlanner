@@ -2,6 +2,17 @@
 
 Verified on 16 November 2026 with Node.js 24.22.1.
 
+## Updated defaults and explanatory sections
+
+- `node --test tests/physics.test.cjs`: **10 tests passed, 0 failed**, including feasibility of the new large-sample default plan. The original analytical fixture remains fixed independently of the UI defaults.
+- Defaults: detector efficiency 100%, effective pixel size 50 µm, diameter 150 mm, transmission 50%. Required full-period resolution remains 100 µm.
+- Updated example result: 4,713 projections, 0.16 s per projection, angular increment 0.0381922°, model SNR 212.809 and 10,180.08 s total. The count floor, rather than target SNR 30, sets the exposure. There are 288 feasible projection counts within the default maximum of 5,000.
+- Added bullet-point explanations for k, F, read noise, shared noise floor, detector efficiency, pixel size and the calibration note. Added illustrative SNR brackets with relative noise and interpretation; no detection thresholds are claimed.
+- Rebuilt `dist` from the updated sources.
+- Browser confirmed all four requested defaults, the new SNR table and calibration bullets, and a feasible displayed plan. Changing transmission and pressing Reset restored the new defaults. The SNR guide was visually inspected at desktop width.
+
+## Initial delivery checks (previous example defaults)
+
 - `node --test tests/physics.test.cjs`: **9 tests passed, 0 failed**.
 - `node scripts/build.cjs`: generated the deployable `dist` directory successfully.
 - Local server returned HTTP 200 for the application.

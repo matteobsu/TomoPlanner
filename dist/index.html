@@ -27,11 +27,38 @@
           <div id="results" aria-live="polite"></div>
           <div id="warnings"></div>
         </section>
+        <section class="plot-panel methodology" aria-labelledby="snrGuideTitle">
+          <h2 id="snrGuideTitle">SNR ranges · what do they mean?</h2>
+          <p>Here SNR = L/σ, where L is the representative attenuation signal and σ is the modeled reconstructed noise standard deviation. Relative noise is 100/SNR percent of L. The brackets below are <strong>illustrative reading aids, not validated image-quality or detection thresholds</strong>.</p>
+          <div class="table-scroll"><table class="guide-table"><thead><tr><th scope="col">SNR bracket</th><th scope="col">Relative noise (σ/L)</th><th scope="col">How to read it</th></tr></thead><tbody>
+            <tr><th scope="row">Below 1</th><td>Above 100%</td><td>Noise exceeds the representative attenuation signal.</td></tr>
+            <tr><th scope="row">1 to below 5</th><td>Above 20%, up to 100%</td><td>Large fluctuations relative to the signal; substantial uncertainty in individual values.</td></tr>
+            <tr><th scope="row">5 to below 10</th><td>Above 10%, up to 20%</td><td>Noise remains a substantial fraction of the signal.</td></tr>
+            <tr><th scope="row">10 to below 20</th><td>Above 5%, up to 10%</td><td>Smaller relative fluctuations; suitability depends on the measurement task.</td></tr>
+            <tr><th scope="row">20 to below 50</th><td>Above 2%, up to 5%</td><td>A few percent modeled random uncertainty relative to the attenuation signal.</td></tr>
+            <tr><th scope="row">50 and above</th><td>2% or less</td><td>Low modeled relative noise; systematic bias and resolution still need separate checks.</td></tr>
+          </tbody></table></div>
+          <p><strong>Example:</strong> SNR 30 means σ is about 3.3% of L, not 3.3% uncertainty in every physical measurement. High attenuation SNR does not guarantee visibility of a small feature: feature contrast, spatial resolution, artifacts and the reconstruction method also matter. This planner does not calculate feature contrast-to-noise ratio (CNR).</p>
+        </section>
         <section class="plot-panel"><div class="plot-header"><div><h2>Explore the trade-off</h2><p>Hover for values, drag to zoom, double-click to reset. Click a feasible plan to inspect it.</p></div></div>
           <div id="plotFallback" class="notice" hidden>Interactive charts could not load from Plotly’s CDN. Calculations, candidate inspection and export remain available.</div>
           <div id="timePlot" class="plot" aria-label="Total time and required exposure versus projection count"></div>
           <div id="snrPlot" class="plot" aria-label="Estimated SNR versus exposure"></div>
           <label class="field inspect">Inspect feasible projection count<input id="inspect" type="number" step="1"></label><p id="inspection" aria-live="polite"></p>
+        </section>
+        <section class="plot-panel methodology" aria-labelledby="calibrationGuideTitle">
+          <h2 id="calibrationGuideTitle">Detector & reconstruction calibration · parameter guide</h2>
+          <p>Use measurements from the same detector settings, spatial resolution, reconstruction filter and signal/ROI definition as the planned scan. The defaults are examples, not a measured detector calibration.</p>
+          <ul class="parameter-guide">
+            <li><strong>Reconstruction noise gain k (dimensionless; default 1):</strong> Converts projection noise to the normalized reconstructed attenuation scale. It includes the effect of the reconstruction filter, geometry and noise transfer. A larger k increases predicted noise and usually requires more exposure. Fit it from repeated phantom scans; it is not the camera's electronic gain.</li>
+            <li><strong>Detector excess variance factor F (dimensionless; default 1):</strong> Multiplies the ideal Poisson counting variance. F = 1 is the ideal counting limit; F &gt; 1 represents additional detector variance. Estimate it from repeated uniform exposures in equivalent neutron counts after accounting for read noise. This model does not allow F below 1.</li>
+            <li><strong>Read noise σᵣ (equivalent detected counts RMS per pixel per projection; default 0):</strong> Independent detector/readout fluctuations added to each projection. Its variance contribution scales as (σᵣ/(qt))², so it matters most at short exposures. Estimate it from repeated dark frames and a measured conversion from detector output to equivalent detected counts. Zero is an idealized assumption, not a measured absence of read noise.</li>
+            <li><strong>Shared reconstructed noise floor σ₀ (normalized attenuation units; default 0):</strong> A non-averaging noise contribution representing shared flat-field uncertainty, drift or other correlated errors in this simplified model. Longer exposures and more views cannot remove this term. Estimate it from repeat-scan variance over different exposures and projection counts. When σ₀ &gt; 0, the asymptotic SNR ceiling is L/σ₀; the exact ceiling cannot be reached with finite exposure.</li>
+            <li><strong>Detector efficiency η (percent; default 100%):</strong> The fraction of incident neutrons registered as useful detected counts. It sets the count rate, separately from F and read noise. 100% is the requested ideal-efficiency default; replace it with the effective measured value for your detector and neutron spectrum.</li>
+            <li><strong>Effective pixel size p (µm at the sample; default 50 µm):</strong> Sets the pixel collection area and detected count rate. It is the sample-plane sampling pitch after magnification/binning, not a measured spatial resolution. The full-period resolution requested in this planner must be at least twice this pitch.</li>
+            <li><strong>Calibration note:</strong> Free text included in the exported plan. Record the phantom, date, detector settings, reconstruction filter, ROI/SNR definition and source of the fitted parameters. This note documents provenance; entering it does not validate the model.</li>
+          </ul>
+          <p>Fit k and σ₀ across multiple N and exposure values, and characterize F and read noise independently where possible. A single scan cannot identify all parameters. Validate on separate scans before using the estimates for beamtime decisions.</p>
         </section>
         <section class="plot-panel methodology"><h2>How the estimate works</h2>
           <p><strong>Resolution convention:</strong> r is a full spatial period (two detector samples). Require p ≤ r/2 and N ≥ ceil(πD/r). Angles are 0, 180/N, …, 180 − 180/N degrees; the endpoint is not duplicated.</p>

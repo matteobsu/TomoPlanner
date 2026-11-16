@@ -1,8 +1,14 @@
 const {test}=require('node:test');
 const assert=require('node:assert/strict');
-const {defaults:d}=require('../js/models.js');
+const {defaults}=require('../js/models.js');
+// Fixed analytical fixture, independent of the app's editable example defaults.
+const d={...defaults,transmission:30,diameter:10,efficiency:50};
 const P=require('../js/physics.js');
 const near=(a,b)=>assert.ok(Math.abs(a-b)<1e-9*Math.max(1,Math.abs(b)),`${a} != ${b}`);
+test('large-sample default plan is feasible within projection limits',()=>{
+  const r=P.optimize(defaults);assert.ok(r.ok);assert.equal(r.minProjections,4713);
+  near(r.rate,125);assert.ok(r.best.snr>=defaults.target);assert.ok(r.best.projections<=defaults.maxProjections);
+});
 test('unit conversion and angular full-period convention',()=>{
   const c=P.constants(d);near(c.rate,37.5);near(c.signal,-Math.log(.3));assert.equal(c.minProjections,315);
 });
