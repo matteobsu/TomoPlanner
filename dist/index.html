@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Transparent neutron tomography acquisition planning with angular sampling and Poisson counting statistics.">
+  <title>TomoPlanner · Neutron tomography</title>
+  <link rel="stylesheet" href="style.css">
+  <script defer src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+  <script defer src="js/models.js"></script><script defer src="js/physics.js"></script>
+  <script defer src="js/plot.js"></script><script defer src="js/app.js"></script>
+</head>
+<body>
+  <header class="topbar"><div class="brand"><span class="mark" aria-hidden="true">◉</span><div><h1>TomoPlanner</h1><p>Neutron tomography acquisition planning</p></div></div><span class="badge">180° · parallel beam</span></header>
+  <main class="page-shell">
+    <section class="intro"><div><p class="eyebrow">FROM BEAM TO RECONSTRUCTION</p><h2>Plan your next scan.</h2><p>Balance angular sampling, counting statistics and beamtime around a target SNR.</p></div><button id="reset" class="secondary-button" type="button">Reset example</button></section>
+    <div class="workspace">
+      <aside class="controls-panel"><form id="parameters" novalidate>
+        <section class="panel-section"><h2><span>01</span> Beam & sample</h2><div id="beam" class="fields"></div></section>
+        <details class="panel-section" open><summary>02 · Detector & reconstruction calibration</summary><p class="section-note">Illustrative defaults. k and σ₀ must be fitted for your detector, resolution, reconstruction filter and SNR definition.</p><div id="calibration" class="fields"></div><label class="field">Calibration note (included in export)<input id="calibrationNote" type="text" maxlength="500" placeholder="e.g. phantom, filter, ROI and date"></label></details>
+        <details class="panel-section" open><summary>03 · Acquisition limits</summary><div id="limits" class="fields"></div></details>
+        <p class="section-note">Updates automatically. All calculations run in your browser.</p>
+      </form></aside>
+      <div class="results-column">
+        <section class="plot-panel" aria-labelledby="planTitle"><div class="plot-header"><div><p class="eyebrow">MINIMUM TIME · WITHIN YOUR LIMITS</p><h2 id="planTitle">Recommended acquisition</h2></div><button id="export" class="primary-button" type="button">Export plan ↓</button></div>
+          <div class="notice"><strong>Model estimate — not experimentally validated.</strong> Reconstructed SNR uses an empirical noise-transfer model. Default calibration is illustrative.</div>
+          <div id="errors" role="alert" hidden></div>
+          <div id="results" aria-live="polite"></div>
+          <div id="warnings"></div>
+        </section>
+        <section class="plot-panel"><div class="plot-header"><div><h2>Explore the trade-off</h2><p>Hover for values, drag to zoom, double-click to reset. Click a feasible plan to inspect it.</p></div></div>
+          <div id="plotFallback" class="notice" hidden>Interactive charts could not load from Plotly’s CDN. Calculations, candidate inspection and export remain available.</div>
+          <div id="timePlot" class="plot" aria-label="Total time and required exposure versus projection count"></div>
+          <div id="snrPlot" class="plot" aria-label="Estimated SNR versus exposure"></div>
+          <label class="field inspect">Inspect feasible projection count<input id="inspect" type="number" step="1"></label><p id="inspection" aria-live="polite"></p>
+        </section>
+        <section class="plot-panel methodology"><h2>How the estimate works</h2>
+          <p><strong>Resolution convention:</strong> r is a full spatial period (two detector samples). Require p ≤ r/2 and N ≥ ceil(πD/r). Angles are 0, 180/N, …, 180 − 180/N degrees; the endpoint is not duplicated.</p>
+          <div class="equation-card">q = Φ (p × 10⁻⁴)² η T &nbsp; · &nbsp; L = −ln(T)<br>σ² = k² [F/(qt) + (σᵣ/(qt))²] / N + σ₀²<br>SNR = L / σ &nbsp; · &nbsp; acquisition time = N(t + overhead)</div>
+          <p>q is transmitted detected counts per pixel per second. T and η are fractions. Ideal neutron counts are Poisson (F = 1); F ≥ 1 represents excess detector variance. σᵣ is independent read noise in equivalent detected counts per projection. Log-transmission variance uses first-order error propagation.</p>
+          <p>The reconstructed signal is a normalized attenuation proxy L. The empirical dimensionless gain k maps projection noise to this signal scale; it is <strong>not a universal tomography constant</strong>. Shared flat-field, drift and reconstruction errors are represented only by the non-averaging floor σ₀, in the same normalized attenuation units. Reference calibration image acquisition time is excluded.</p>
+          <p>For every integer N in the allowed range, solve the positive quadratic for the shortest exposure meeting the target; enforce exposure and count bounds, then minimize total time. Equal-time ties choose fewer projections. “Optimal” applies only to this bounded model.</p>
+          <p>Assumes uniform parallel-beam 180° coverage, a fully covered stationary sample, constant flux, independent views and representative transmission. No scatter, beam hardening, motion, detector MTF, saturation, cone-beam effects or spatially varying attenuation is simulated. Pixel sampling alone does not establish physical resolution. Calibrate and verify with representative phantoms before beamtime decisions.</p>
+          <p>Background: <a href="https://www.slaney.org/pct/pct-toc.html" target="_blank" rel="noopener">Kak & Slaney, Principles of Computerized Tomographic Imaging</a>, chapters 3 and 5. The empirical SNR transfer equation here is an explicitly chosen planning model, not a claim from that reference.</p>
+        </section>
+      </div>
+    </div><footer>TomoPlanner 1.0 · Transparent assumptions. Reproducible plans.</footer>
+  </main>
+</body></html>
