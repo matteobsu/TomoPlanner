@@ -6,7 +6,7 @@
     ['beam','transmission','Average sample transmission','%',50,0.001,99.999],
     ['beam','pixel','Effective pixel size','µm',50,0.001,1e5],
     ['beam','target','Target reconstructed SNR','',30,0.01,1e6],
-    ['beam','diameter','Sample diameter','mm',150,0.001,1e4],
+    ['beam','diameter','Sample diameter','mm',15,0.001,1e4],
     ['beam','efficiency','Detector efficiency','%',100,0.001,100],
     ['calibration','gain','Reconstruction noise gain k','',1,0.0001,1e4],
     ['calibration','excess','Detector excess variance factor F','',1,1,1e4],
