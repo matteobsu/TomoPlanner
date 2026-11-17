@@ -1,6 +1,18 @@
 # Delivery verification
 
-Verified on 16 November 2026 with Node.js 24.22.1.
+Latest verification: 17 November 2026 with Node.js 24.22.1.
+
+## Version 1.1: standard planning, optional calibration and gray levels
+
+- All **16 numerical tests passed**, including six new tests for blank/omitted advanced inputs, sample/reference quantization variance, averaging reference frames, independent bisection of the quantization-aware optimizer, shared reference ceilings, validation, and the high-gray-signal limit.
+- Calibration starts collapsed with four blank numerical fields. Browser inspection confirmed that blank fields are valid, a plan is produced without calibration entries, and the standard assumptions are displayed explicitly.
+- Entering only the open-beam signal displayed the required signal/exposure pairing message and disabled export. Adding its exposure restored the plan and enabled the quantization terms.
+- Browser example: an open-beam signal of 100 ADU at 1 s, with blank step/frame inputs (resolved to 1 ADU and one frame), gives 8 sample ADU per projection and model SNR 158.112 at the default 0.16 s exposure; detected neutron-equivalents remain 20 per pixel. The low-gray approximation warning is shown.
+- Changing k to 2 reduced the model SNR to 79.056. Clearing that input restored k = 1 and SNR 158.112.
+- Export downloaded successfully and was inspected for version 1.1.0, separate entered/resolved inputs, neutron-equivalent and ADU units, and the included quantization model.
+- Reset cleared all eight optional numeric fields, collapsed advanced calibration and restored the standard plan with no quantization estimate (model SNR 212.809). Prior requested beam/sample defaults are preserved.
+- No browser warning/error console entries were reported in these checks. A desktop screenshot was saved alongside the versioned ZIP. The updated application was rebuilt and all six static assets returned HTTP 200.
+- These are implementation checks, not measured detector or reconstructed-image validation. Quantization assumes linear unsaturated native data and independent rounding; reference Poisson/read noise and dark-subtraction uncertainty remain excluded and are disclosed in the app and README.
 
 ## Updated defaults and explanatory sections
 
